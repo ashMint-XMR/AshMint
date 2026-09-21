@@ -1,5 +1,8 @@
 {
   "functions": {
+    "api/xmr/testnet/receipts.js": {
+      "maxDuration": 15
+    },
     "api/xmr/[...path].js": {
       "maxDuration": 15
     }

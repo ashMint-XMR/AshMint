@@ -14,5 +14,21 @@ function showConfig() { const live = testnet || config.launchReady; const stagin
 async function loadLedger() { const response = await fetch(receiptApi, { cache: "no-store" }); const data = await response.json(); const rows = data.receipts || []; $("#ledger-status").textContent = rows.length ? `${rows.length} ${testnet ? "practice " : ""}receipt${rows.length === 1 ? "" : "s"}.` : `No ${testnet ? "practice " : ""}receipts yet.`; $("#ledger-body").replaceChildren(...rows.map((item) => { const row = document.createElement("tr"); [short(item.txid), `${xmr(item.burnAtomic)} XMR`, `${Number(item.amount).toLocaleString()} ${config.futureToken.symbol}`, short(item.recipient), new Date(item.acceptedAt).toLocaleString()].forEach((value) => { const cell = document.createElement("td"); cell.textContent = value; row.append(cell); }); return row; })); }
 async function submit(event) { event.preventDefault(); if (!testnet && !config.launchReady) return; const form = Object.fromEntries(new FormData(event.currentTarget)); const status = $("#form-status"); const button = $("#submit"); button.disabled = true; status.textContent = testnet ? "Creating receipt…" : "Verifying payment proof…"; try { if (testnet) form.burnAtomic = quote($("#amount").value).toString(); const response = await fetch(receiptApi, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(form) }); const body = await response.json(); if (!response.ok) throw new Error(body.error || "Verification failed."); event.currentTarget.reset(); status.textContent = `Receipt accepted: ${short(body.receipt.txid)}.`; await loadLedger(); } catch (error) { status.textContent = error.message; } finally { button.disabled = !(testnet || config.launchReady); } }
 
-async function initialize() { try { const response = await fetch("/api/xmr/config", { cache: "no-store" }); config = await response.json(); showConfig(); await loadLedger(); } catch { $("#launch-notice").textContent = "Unable to load launch configuration."; } }
+async function initialize() {
+  try {
+    const response = await fetch("/api/xmr/config", { cache: "no-store" });
+    if (!response.ok) throw new Error("config unavailable");
+    config = await response.json();
+    showConfig();
+  } catch {
+    $("#launch-notice").textContent = "Unable to load launch configuration.";
+    return;
+  }
+
+  try {
+    await loadLedger();
+  } catch {
+    $("#ledger-status").textContent = "Unable to load the receipt ledger.";
+  }
+}
 $("#amount").addEventListener("input", updateEstimate); $("#receipt-form").addEventListener("submit", submit); $("#refresh").addEventListener("click", loadLedger); initialize();
