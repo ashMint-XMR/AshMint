@@ -1,0 +1,7 @@
+.register{background:#edf0e9;border-block:1px solid var(--line)}
+.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:28px}
+.metric-grid article{min-height:145px;padding:20px;background:var(--paper);border:1px solid var(--line);display:flex;flex-direction:column}
+.metric-grid span,.metric-grid small{color:var(--muted);font-size:.74rem;letter-spacing:.03em}
+.metric-grid strong{font-size:2rem;letter-spacing:-.06em;margin:auto 0 4px}
+.register-empty{margin-top:18px;padding:16px;background:#f7f6f0;border-left:3px solid #f46842;color:var(--muted)}
+@media(max-width:720px){.metric-grid{grid-template-columns:repeat(2,1fr)}.metric-grid article{min-height:125px}}
