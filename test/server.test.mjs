@@ -11,7 +11,7 @@ test("status endpoints expose a fail-closed launch state", async (t) => {
 test("serves the launch console with no active claim capability", async (t) => {
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve)); t.after(() => server.close()); const { port } = server.address();
   const response = await fetch(`http://127.0.0.1:${port}/`); const page = await response.text();
-  assert.equal(response.status, 200); assert.match(page, /XMR RECEIPTS/); assert.match(page, /never asks for a seed phrase/);
+  assert.equal(response.status, 200); assert.match(page, /ASHMINT/); assert.match(page, /never asks for a seed phrase/);
 });
 
 test("accepts explicitly simulated testnet receipts only at the testnet endpoint", async (t) => {
