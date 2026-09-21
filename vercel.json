@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/xmr/[...path].js": {
+      "maxDuration": 15
+    }
+  }
+}

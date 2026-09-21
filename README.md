@@ -43,6 +43,10 @@ Use `.env.stagenet.example` only for non-production stagenet experiments. Use `.
 
 See [architecture](./docs/ARCHITECTURE.md) and [security model](./docs/SECURITY.md) for design boundaries.
 
+## Vercel
+
+The Vercel deployment serves the UI and the local practice API through `api/xmr/[...path].js`. Vercel's ephemeral filesystem is not a production receipt ledger: do not enable receipt collection there until the store is replaced with managed durable storage and all mainnet preflight requirements are satisfied.
+
 ## API
 
 - `GET /api/xmr/config` — public launch configuration and fail-closed status.

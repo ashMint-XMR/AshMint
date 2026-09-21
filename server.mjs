@@ -42,7 +42,7 @@ async function claim(req, res) {
   await store.append(receipt, config); return send(res, 201, { receipt });
 }
 
-const server = http.createServer(async (req, res) => { try {
+export async function handler(req, res) { try {
   if (limited(req)) return send(res, 429, { error: "Rate limit exceeded." }); const url = new URL(req.url, "http://localhost");
   if (req.method === "GET" && url.pathname === "/api/xmr/config") return send(res, 200, publicConfig(config));
   if (req.method === "GET" && url.pathname === "/api/xmr/health") return send(res, 200, { ok: true, launchReady: config.launchReady, productionReady: config.productionReady });
@@ -58,6 +58,7 @@ const server = http.createServer(async (req, res) => { try {
     res.writeHead(200, { "content-type": mime, "cache-control": "no-store", ...securityHeaders }); return res.end(source);
   }
   return send(res, 404, { error: "Not found." });
-} catch (error) { return send(res, 400, { error: error.message || "Bad request." }); } });
+} catch (error) { return send(res, 400, { error: error.message || "Bad request." }); } }
+const server = http.createServer(handler);
 if (process.argv[1] === fileURLToPath(import.meta.url)) server.listen(config.port, () => console.log(`XMR receipt service listening on :${config.port}; launch-ready=${config.launchReady}; production-ready=${config.productionReady}`));
 export { server, config };
